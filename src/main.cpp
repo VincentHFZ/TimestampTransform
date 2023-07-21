@@ -11,7 +11,9 @@
 #include <glog/raw_logging.h>
 
 DEFINE_uint64(unix_time, 0, "unix时间戳, 秒");
+DEFINE_uint64(u, 0, "unix时间戳, 秒");
 DEFINE_string(bj_time, "null", "北京时间, 格式: 2020-01-01-00-00-00");
+DEFINE_string(bj, "null", "北京时间, 格式: 2020-01-01-00-00-00");
 
 // 初始化 glog
 void InitGlog(std::string log_name, int32_t log_size) 
@@ -66,7 +68,7 @@ std::string PrintUsage(void)
     usage += "  ./timestamp_transform --unix_time=1577808000\n";
     usage += "  ./timestamp_transform -u=1577808000\n";
     usage += "  ./timestamp_transform --bj_time=2020-01-01-00-00-00\n";
-    usage += "  ./timestamp_transfrom -b=2020-01-01-00-00-00";
+    usage += "  ./timestamp_transfrom -bj=2020-01-01-00-00-00";
     return usage;
 }
 
@@ -81,9 +83,17 @@ int main(int argc, char **argv)
     {
         LOG(INFO) << "北京时间: " << GetBeijingTime(FLAGS_unix_time);
     }
+    else if(FLAGS_u > 0)
+    {
+        LOG(INFO) << "北京时间: " << GetBeijingTime(FLAGS_u);
+    }
     else if(FLAGS_bj_time != "null")
     {
         LOG(INFO) << "unix时间: " << GetUnixTime(FLAGS_bj_time);
+    }
+    else if(FLAGS_bj != "null")
+    {
+        LOG(INFO) << "unix时间: " << GetUnixTime(FLAGS_bj);
     }
     else
     {
