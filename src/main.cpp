@@ -15,22 +15,6 @@ DEFINE_uint64(u, 0, "unix时间戳, 秒");
 DEFINE_string(bj_time, "null", "北京时间, 格式: 2020-01-01-00-00-00");
 DEFINE_string(bj, "null", "北京时间, 格式: 2020-01-01-00-00-00");
 
-// 初始化 glog
-void InitGlog(std::string log_name, int32_t log_size) 
-{
-    std::string log_dir = "/home/eventec/logs/";
-    log_dir = log_dir + log_name;
-    google::InitGoogleLogging(log_name.c_str());
-    google::SetLogDestination(google::GLOG_INFO, log_dir.c_str());
-    google::SetStderrLogging(google::GLOG_INFO);
-    fLB::FLAGS_colorlogtostderr = true;                 // 设置颜色
-    fLB::FLAGS_stop_logging_if_full_disk = true;        // 磁盘满了则停止日志记录
-    fLI::FLAGS_max_log_size = log_size;                 // M
-    fLI::FLAGS_logbufsecs = 0;                          // 实时输出
-
-    return;
-}
-
 // unix 时间戳转换成北京时间，格式：2020-01-01-00-00-00
 std::string GetBeijingTime(uint64_t timestamp)
 {
@@ -74,31 +58,30 @@ std::string PrintUsage(void)
 
 int main(int argc, char **argv)
 {
-    InitGlog("TimeStampTransform", 10);
     FLAGS_stderrthreshold = google::INFO;
     FLAGS_colorlogtostderr = true;
     google::ParseCommandLineFlags(&argc, &argv, true);
 
     if(FLAGS_unix_time > 0)
     {
-        LOG(INFO) << "北京时间: " << GetBeijingTime(FLAGS_unix_time);
+        std::cout << "北京时间: " << GetBeijingTime(FLAGS_unix_time) << std::endl;
     }
     else if(FLAGS_u > 0)
     {
-        LOG(INFO) << "北京时间: " << GetBeijingTime(FLAGS_u);
+        std::cout << "北京时间: " << GetBeijingTime(FLAGS_u) << std::endl;
     }
     else if(FLAGS_bj_time != "null")
     {
-        LOG(INFO) << "unix时间: " << GetUnixTime(FLAGS_bj_time);
+        std::cout << "unix时间: " << GetUnixTime(FLAGS_bj_time) << std::endl;
     }
     else if(FLAGS_bj != "null")
     {
-        LOG(INFO) << "unix时间: " << GetUnixTime(FLAGS_bj);
+        std::cout << "unix时间: " << GetUnixTime(FLAGS_bj) << std::endl;
     }
     else
     {
-        LOG(ERROR) << "参数错误";
-        LOG(WARNING) << "\n" << PrintUsage();
+        std::cout << "参数错误" << std::endl;
+        std::cout << "\n" << PrintUsage() << std::endl;
     }
     return 0;
 }
