@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <regex>
 #include <ctime>
 
 // gflag
@@ -15,6 +16,21 @@ DEFINE_uint64(unix_time, 0, "unix时间戳, 秒");
 DEFINE_uint64(u, 0, "unix时间戳, 秒");
 DEFINE_string(bj_time, "null", "北京时间, 格式: 2020-01-01-00-00-00");
 DEFINE_string(bj, "null", "北京时间, 格式: 2020-01-01-00-00-00");
+
+// 提取字符串中的整数
+void ExtractIntegers(const std::string &str, std::vector<int> &numbers) 
+{
+    numbers.clear();
+    std::regex re("\\d+");
+    std::sregex_iterator it(str.begin(), str.end(), re);
+    std::sregex_iterator end;
+
+    while (it != end) 
+    {
+        numbers.push_back(std::stoi(it->str()));
+        ++it;
+    }
+}
 
 // unix 时间戳转换成北京时间，格式：2020-01-01-00-00-00
 std::string GetBeijingTime(uint64_t t)
@@ -39,7 +55,25 @@ uint64_t GetUnixTime(std::string bj_time)
 {
     struct tm tm_;
     int year, month, day, hour, minute, second;
-    sscanf(bj_time.c_str(), "%d-%d-%d-%d-%d-%d", &year, &month, &day, &hour, &minute, &second);
+    std::vector<int> v_i;
+    ExtractIntegers(bj_time, v_i);
+    for(int i = 0; i < v_i.size(); i++)
+    {
+        if(i == 0)
+            year = v_i[0];
+        else if(i == 1)
+            month = v_i[1];
+        else if(i == 2)
+            day = v_i[2];
+        else if(i == 3)
+            hour = v_i[3];
+        else if(i == 4)
+            minute = v_i[4];
+        else if(i == 5)
+            second = v_i[5];
+    }
+    // sscanf(bj_time.c_str(), "%d-%d-%d-%d-%d-%d", &year, &month, &day, &hour, &minute, &second);
+    
     tm_.tm_year = year - 1900;
     tm_.tm_mon = month - 1;
     tm_.tm_mday = day;
@@ -85,7 +119,11 @@ int main(int argc, char **argv)
     }
     else
     {
-        std::cout << "参数错误" << std::endl;
+        std::cout << "参数错误: " << std::endl;
+        std::cout << "FLAGS_unix_time: " << FLAGS_unix_time << std::endl;
+        std::cout << "FLAGS_u: " << FLAGS_u << std::endl;
+        std::cout << "FLAGS_bj_time: " << FLAGS_bj_time << std::endl;
+        std::cout << "FLAGS_bj: " << FLAGS_bj << std::endl;
         std::cout << "\n" << PrintUsage() << std::endl;
     }
     return 0;
