@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <ctime>
 
 // gflag
 #include <gflags/gflags.h>
@@ -16,17 +17,21 @@ DEFINE_string(bj_time, "null", "北京时间, 格式: 2020-01-01-00-00-00");
 DEFINE_string(bj, "null", "北京时间, 格式: 2020-01-01-00-00-00");
 
 // unix 时间戳转换成北京时间，格式：2020-01-01-00-00-00
-std::string GetBeijingTime(uint64_t timestamp)
+std::string GetBeijingTime(uint64_t t)
 {
-    time_t timep = timestamp;
-    struct tm *p;
-    p = gmtime(&timep);
-    // 东八区 北京时间
-    p->tm_hour += 8;
+    // time_t timep = timestamp;
+    // struct tm *p;
+    // p = gmtime(&timep);
+    // // 东八区 北京时间
+    // p->tm_hour += 8;
 
-    char s[100];
-    strftime(s, sizeof(s), "%Y-%m-%d-%H-%M-%S", p);
-    return s;
+    // char s[100];
+    // strftime(s, sizeof(s), "%Y-%m-%d-%H-%M-%S", p);
+    std::time_t time_stamp = t;
+    char time_str[20];
+    std::strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", std::localtime(&time_stamp));
+
+    return std::string(time_str);
 }
 
 // 北京时间转换成 unix 时间戳，格式：2020-01-01-00-00-00
