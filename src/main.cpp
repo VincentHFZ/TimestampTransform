@@ -80,6 +80,7 @@ uint64_t GetUnixTime(std::string bj_time)
     tm_.tm_hour = hour;
     tm_.tm_min = minute;
     tm_.tm_sec = second;
+    tm_.tm_isdst = -1;          // 未知夏令时
     uint64_t unix_stamp = mktime(&tm_);
     return unix_stamp;
 }
